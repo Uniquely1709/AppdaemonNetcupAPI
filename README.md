@@ -7,6 +7,9 @@ For each of the servers in the array, the app creates an own sensor with more in
 
 ![Preview](https://github.com/dolphinxjd/AppdaemonNetcupAPI/blob/master/HomeAssistant.png?raw=true)
 
+
 the config requires tthe servercontrolpanel user and api password from your netcup account. 
 
 timer defines time beteween each updates in minutes. Default value is each hour.
+
+### "suds-community" python-package in Appdaemon required!
