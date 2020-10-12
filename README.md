@@ -13,3 +13,4 @@ you need to change the scp_user and scp_api_passw to your ServerControlPanel use
 The timer defines time beteween each update in minutes. Default value is every hour.
 
 ### "suds-community" python-package in Appdaemon required!
+## only works with appdaemon 4.0.4 or later !!!
