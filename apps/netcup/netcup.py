@@ -15,7 +15,7 @@ class Netcup(hass.Hass):
         self.client = Client(url)
         
         self.run_every(self.getvalues, "now", self.timer * 60)
-        self.listen_state(self.switch_change, "switch.netcup_vserver_v220200680888121154")
+        self.listen_state(self.switch_change, "switch.x")
 
     def getvalues(self, kwargs):
 
