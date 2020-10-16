@@ -6,13 +6,16 @@ from suds.client import Client
 
 class Netcup(hass.Hass):
     def initialize(self):
+        self.listen_state_handle_list = []
         self.scp_user = globals.get_arg(self.args, "scp_user")
         self.scp_api_passw = globals.get_arg(self.args, "scp_api_passw")
         self.timer = globals.get_arg(self.args, "timer")
         self.server = None
         url = 'https://www.servercontrolpanel.de:443/WSEndUser?wsdl'
         self.client = Client(url)
+        
         self.run_every(self.getvalues, "now", self.timer * 60)
+        self.listen_state(self.switch_change, "switch.netcup_vserver_v220200680888121154")
 
     def getvalues(self, kwargs):
 
@@ -27,6 +30,7 @@ class Netcup(hass.Hass):
             self.log("Couldnt get Server list, check configuration")
         if(serversExists == True):
             count = 0
+            self.listen_state_handle_list = None
             for i in servers:
                 self.server = servers[count]
                 self.log("Create/Update Server: "+ format(self.server))
@@ -72,8 +76,25 @@ class Netcup(hass.Hass):
 
         listee = infor[8]
         sensorserver = "sensor.netcup_vserver_"+ format(self.server)
+        switchserver = "switch.netcup_vserver_"+ format(self.server)
         try: 
             self.set_state(sensorserver,state=serverstate.capitalize(),attributes={"friendly_name": nickname, "IPv4": ips[0], "IPv6": ips[1], "Uptime": uptime, "Cores": infor[0], "Memory": infor[3], "Reboot recommended": infor[4], "HDD Size": listee[0][0], "HDD Used": listee[0][5], "Optimization Recommended": listee[0][3], "Optimization Message": listee[0][4]})
             self.log("Created / Updated sensor for "+ format(self.server))
         except:
             self.log("Couldnt create / update sensor for " + format(self.server) + " Please check configuration")
+        try:
+            if serverstate == "online":
+                self.set_state(switchserver,state="on")
+                self.log("Created / Updated switch for "+ format(self.server))
+            else: 
+                self.set_state(switchserver,state="off")
+        except: 
+            self.log("Couldnt create / update switch for "+ format(self.server) + " Please check configuration")
+
+    
+    def switch_change(self, entity, attribute, old, new, kwargs):
+        self.log("Switch "+ entity +" turned from "+ old +" to "+ new)
+        if new == "on":
+            self.log("Switchstate on")
+        elif new == "off":
+            self.log("Switchstate off")
