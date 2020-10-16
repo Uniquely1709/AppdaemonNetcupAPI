@@ -1,6 +1,6 @@
 neetcup:
   module: netcup
   class: Netcup
-  scp_user: xxxxxx
-  scp_api_passw: xxxxx
+  scp_user: !secret scp_user
+  scp_api_passw: !secret scp_api_passw
   timer: 60
